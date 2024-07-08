@@ -1,0 +1,605 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(FitnessProductsApp());
+}
+
+class FitnessProductsApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Fitness Products',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: LoginPage(),
+    );
+  }
+}
+
+class LoginPage extends StatelessWidget {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    void _handleLogin(BuildContext context) {
+      final String username = 'user'; // Replace with your actual username
+      final String password = 'pass'; // Replace with your actual password
+
+      if (_emailController.text == username && _passwordController.text == password) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Wrong username or password'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Fitness Products'),
+        centerTitle: true,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(
+                'https://marketplace.canva.com/EAFzZ-ml0FE/1/0/800w/canva-black-white-and-yellow-bold-fitness-logo-KNI5Z8TVQ7c.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  obscureText: true,
+                ),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () => _handleLogin(context),
+                  child: Text('Login'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = [
+    HomePage(),
+    AddCartPage(),
+    ProfilePage(),
+  ];
+
+  final List<String> _titles = [
+    'Home',
+    'Add to Cart',
+    'Profile',
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  void _handleMenuSelection(String value) {
+    switch (value) {
+      case 'Settings':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SettingsPage()),
+        );
+        break;
+      case 'Contact Us':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ContactUsPage()),
+        );
+        break;
+      case 'Help':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HelpPage()),
+        );
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Fitness Products', // Updated title with bold 'b'
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              // Handle search button action here
+            },
+          ),
+          PopupMenuButton<String>(
+            onSelected: _handleMenuSelection,
+            itemBuilder: (BuildContext context) {
+              return {'Settings', 'Contact Us', 'Help'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
+      ),
+      body: _pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Add to Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _currentIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  final List<Product> products = [
+    Product(
+        name: 'Adjustable Dumbbell',
+        imageUrl:
+            'https://www.theflexnest.com/cdn/shop/products/3_2048x2048.png',
+        price: 29.99),
+    Product(
+        name: 'Ankle wrap',
+        imageUrl:
+            'https://m.media-amazon.com/images/I/51bU2okwuRL.AC_UF1000,1000_QL80.jpg',
+        price: 19.99),
+    Product(
+        name: 'Hand wrap',
+        imageUrl:
+            'https://www.venum.com/cdn/shop/files/HANDWRAPS_KONTACT_180_BLACK_1500_02.jpg',
+        price: 9.99),
+    Product(
+        name: 'Sports shoe',
+        imageUrl:
+            'https://assets.ajio.com/medias/sys_master/root/20231005/2AnW/651ed5afafa4cf41f52a2c97/-473Wx593H-464535108-black-MODEL.jpg',
+        price: 40.99),
+    Product(
+        name: 'Gym equipments',
+        imageUrl:
+            'https://m.media-amazon.com/images/I/810sEcX+LsL.AC_UF894,1000_QL80.jpg',
+        price: 100.99),
+    Product(
+        name: 'Adjustable Handgripper',
+        imageUrl:
+            'https://m.media-amazon.com/images/I/71jqq1Nr6FL.AC_SX679.jpg',
+        price: 10.99),
+    Product(
+        name: 'Boxing set',
+        imageUrl:
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCMNVaglfw1YGUjSZPpp4wgtNfnewgyV8iOw&s',
+        price: 300.99),
+    Product(
+        name: 'Adjustable Handgripper',
+        imageUrl:
+            'https://m.media-amazon.com/images/I/612E5G6XuUL.AC_UF894,1000_QL80.jpg',
+        price: 10.99),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchPage(products: products)),
+              );
+            },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 2 / 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            return ProductCard(product: products[index]);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class ProductCard extends StatelessWidget {
+  final Product product;
+
+  ProductCard({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProductDetailPage(product: product)),
+        );
+      },
+      child: Card(
+        elevation: 4,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Image.network(
+                product.imageUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                product.name,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                '\$${product.price.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProductDetailPage extends StatelessWidget {
+  final Product product;
+
+  ProductDetailPage({required this.product});
+
+  void _handleBuyNow(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => OrderConfirmationPage(product: product)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(product.name),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: 250,
+                ),
+              ),
+              SizedBox(height: 16.0),
+              Text(
+                product.name,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                '\$${product.price.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 16.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _handleBuyNow(context),
+                    child: Text('Buy Now'),
+                  ),
+                  SizedBox(width: 16.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle Add to Cart functionality
+                    },
+                    child: Text('Add to Cart'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class OrderConfirmationPage extends StatelessWidget {
+  final Product product;
+
+  OrderConfirmationPage({required this.product});
+
+  void _placeOrder(BuildContext context) {
+    // Implement your order placement logic here
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Order placed for ${product.name}'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Order Confirmation'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Image.network(
+                product.imageUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 250,
+              ),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              product.name,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              '\$${product.price.toStringAsFixed(2)}',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () => _placeOrder(context),
+              child: Text('Place Order'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AddCartPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Add to Cart Page'),
+          SizedBox(height: 20.0),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context); // Navigate back to the previous screen (HomeScreen)
+            },
+            child: Text('Back to Home'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ProfilePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Profile Page'),
+          SizedBox(height: 20.0),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context); // Navigate back to the previous screen (HomeScreen)
+            },
+            child: Text('Back to Home'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SettingsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Settings'),
+      ),
+      body: Center(
+        child: Text('Settings Page'),
+      ),
+    );
+  }
+}
+
+class ContactUsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Contact Us'),
+      ),
+      body: Center(
+        child: Text('Contact Us Page'),
+      ),
+    );
+  }
+}
+
+class HelpPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Help'),
+      ),
+      body: Center(
+        child: Text('Help Page'),
+      ),
+    );
+  }
+}
+
+class SearchPage extends StatelessWidget {
+  final List<Product> products;
+
+  SearchPage({required this.products});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Search'),
+      ),
+      body: Column(
+        children: [
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'Search products...',
+              contentPadding: EdgeInsets.all(16.0),
+            ),
+            onChanged: (query) {
+              // Implement search functionality here
+              // You can filter products based on the query
+            },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(products[index].name),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProductDetailPage(product: products[index])),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Product {
+  final String name;
+  final String imageUrl;
+  final double price;
+
+  Product({required this.name, required this.imageUrl, required this.price});
+}
